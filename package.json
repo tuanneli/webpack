@@ -2,12 +2,14 @@
   "name": "webpack",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "private": true,
   "scripts": {
-    "start": "webpack serve",
-    "build-dev": "webpack",
-    "build-prod": "webpack --node-env=production",
-    "clear": "rd /s /q dist "
+    "begin": "cross-env NODE_ENV=development webpack serve",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open",
+    "build-dev": "cross-env NODE_ENV=development webpack --mode development",
+    "build-prod": "cross-env NODE_ENV=production webpack --mode production",
+    "watch": "cross-env NODE_ENV=development webpack --mode development --watch",
+    "clear": "rd /s /q dist"
   },
   "repository": {
     "type": "git",
@@ -21,25 +23,25 @@
   },
   "homepage": "https://github.com/tuanneli/webpack#readme",
   "devDependencies": {
-    "@babel/core": "^7.20.7",
-    "@babel/preset-env": "^7.20.2",
-    "babel-loader": "^9.1.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3",
     "css-loader": "^6.7.3",
-    "html-loader": "^4.2.0",
+    "css-minimizer-webpack-plugin": "^4.2.2",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "image-webpack-loader": "^8.1.0",
     "mini-css-extract-plugin": "^2.7.2",
-    "postcss": "^8.4.20",
-    "postcss-loader": "^7.0.2",
-    "postcss-preset-env": "^7.8.3",
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
     "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.6",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.12.1"
+    "jquery": "^3.6.3",
+    "normalize.css": "^8.0.1"
   }
 }

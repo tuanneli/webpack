@@ -1,63 +1,88 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
-const mode = process.env.NODE_ENV || 'development';
+const isDev = process.env.NODE_ENV === 'development';
 
-const devMode = mode === 'development';
+const optimization = () => {
+    const config = {
+        splitChunks: {
+            chunks: "all"
+        },
+        runtimeChunk: "single"
+    }
 
-const target = devMode ? 'web' : 'browserslist';
-const devtool = devMode ? 'source-map' : undefined;
+    if (!isDev) {
+        config.minimizer = [
+            new TerserPlugin(),
+            new CssMinimizerPlugin()
+        ]
+    }
+
+    return config;
+}
 
 module.exports = {
-    target,
-    devtool,
-    mode,
+    context: path.resolve(__dirname, 'src'),
+    mode: 'development',
     devServer: {
         port: 3000,
-        open: true,
-        hot: true
+        hot: isDev,
     },
-    entry: ["@babel/polyfill", path.resolve(__dirname, 'src', 'index.js')],
+    entry: {
+        main: './index.js',
+        analytics: './analytics.js'
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        clean: true,
-        filename: "[name].[hash].js",
-        assetModuleFilename: "assets/[hash][ext]"
+        filename: "[name].[contenthash].js",
     },
+    resolve: {
+        extensions: ['.js', '.json'],
+        alias: {
+            '@models': path.resolve(__dirname, 'src', 'models'),
+            '@src': path.resolve(__dirname, 'src')
+        }
+    },
+    optimization: optimization(),
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, 'src', 'index.html')
+            template: "./index.html",
+            favicon: path.resolve(__dirname, 'src', 'assets/icons/favicon.ico'),
+            minify: {
+                collapseWhitespace: !isDev
+            }
         }),
+        new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
-            filename: "[name].[hash].css"
+            filename: "[name].[contenthash].css"
         })
+        // new CopyPlugin({
+        //     patterns: [
+        //         {from: path.resolve(__dirname, 'src', 'assets/icons/favicon.ico'), to: path.resolve(__dirname, "dist")},
+        //     ]
+        // }),
     ],
     module: {
-        rules: [{
-            test: /\.html$/i,
-            loader: "html-loader"
-        },
+        rules: [
             {
                 test: /\.(c|sc|sa)ss$/i,
-                use: [devMode ? "style-loader" : MiniCssExtractPlugin.loader,
-                    "css-loader",
-                    {
-                        loader: "postcss-loader",
-                        options: {
-                            postcssOptions: {
-                                plugins: ['postcss-preset-env']
-                            }
-                        }
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                        // hmr: isDev,
+                        // reloadAll: true
                     },
+                },
+                    "css-loader",
                     "sass-loader"],
-            },
-            {
-                test: /\.woff2?$/i,
-                type: 'asset/resource',
-                generator: {
-                    filename: path.resolve(__dirname, 'dist', 'fonts/[name].[ext]')
-                }
+            }, {
+                test: /\.(ttf|woff|woff2|eot)$/i,
+                use: ["file-loader"]
             },
             {
                 test: /\.(jpe?g|png|gif|svg|webp)$/i,
@@ -88,16 +113,6 @@ module.exports = {
                 ],
                 type: 'asset/resource',
             },
-            {
-                test: /\.m?js$/i,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env']
-                    }
-                }
-            }
-        ]
-    }
+        ],
+    },
 }
