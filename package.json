@@ -9,8 +9,10 @@
     "build-dev": "cross-env NODE_ENV=development webpack --mode development",
     "build-prod": "cross-env NODE_ENV=production webpack --mode production",
     "watch": "cross-env NODE_ENV=development webpack --mode development --watch",
-    "clear": "rd /s /q dist"
+    "clear": "rd /s /q dist",
+    "stats": "webpack --json > stats.json && webpack-bundle-analyzer stats.json"
   },
+  "mobileToDesktop": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuanneli/webpack.git"
@@ -23,11 +25,18 @@
   },
   "homepage": "https://github.com/tuanneli/webpack#readme",
   "devDependencies": {
+    "@babel/core": "^7.20.7",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "babel-loader": "^9.1.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.3",
     "css-minimizer-webpack-plugin": "^4.2.2",
+    "eslint-webpack-plugin": "^3.2.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "image-webpack-loader": "^8.1.0",
@@ -37,11 +46,19 @@
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.6",
     "webpack": "^5.75.0",
+    "webpack-bundle-analyzer": "^4.7.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/polyfill": "^7.12.1",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.30.0",
     "jquery": "^3.6.3",
-    "normalize.css": "^8.0.1"
+    "lodash": "^4.17.21",
+    "normalize.css": "^8.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

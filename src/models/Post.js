@@ -12,4 +12,4 @@ export default class Post {
             // img: this.img,
         }, null, 2)
     }
-};
+}
